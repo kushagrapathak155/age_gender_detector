@@ -53,39 +53,39 @@ class AgeGenderDetector():
 	        confidence = detections[0, 0, i, 2]
             
 	        # filter out weak detections by ensuring the confidence is greater than the minimum confidence
-	        if confidence > self.confidence:
+	     if confidence > self.confidence:
 		        # compute the (x, y)-coordinates of the bounding box for the object
-		        box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
-		        (startX, startY, endX, endY) = box.astype("int")
+		  box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
+		  (startX, startY, endX, endY) = box.astype("int")
 
 		        # extract the ROI of the face and then construct a blob from *only* the face ROI
-		        face = image[startY:endY, startX:endX]
-		        faceBlob = cv2.dnn.blobFromImage(face, 1.0, (227, 227), (78.4263377603, 87.7689143744, 114.895847746), swapRB=False)
+		    face = image[startY:endY, startX:endX]
+		    faceBlob = cv2.dnn.blobFromImage(face, 1.0, (227, 227), (78.4263377603, 87.7689143744, 114.895847746), swapRB=False)
 
 		        # make predictions on the age and find the age bucket with the largest corresponding probability
-		        ageNet.setInput(faceBlob)
-		        preds = ageNet.forward()
-		        i = preds[0].argmax()
-		        age = self.AGE_LIST[i]
-		        ageConfidence = preds[0][i]
+		    ageNet.setInput(faceBlob)
+		    preds = ageNet.forward()
+		    i = preds[0].argmax()
+		    age = self.AGE_LIST[i]
+		    ageConfidence = preds[0][i]
 
                 # make predictions on the gender and find the gender with the largest corresponding probability
-		        genderNet.setInput(faceBlob)
-		        preds = genderNet.forward()
-		        i = preds[0].argmax()
-		        gender = self.GENDER_LIST[i]
-		        genderConfidence = preds[0][i]
+		    genderNet.setInput(faceBlob)
+		    preds = genderNet.forward()
+		    i = preds[0].argmax()
+		    gender = self.GENDER_LIST[i]
+		    genderConfidence = preds[0][i]
 
 		        # display the predicted age and gender to our terminal
-		        text = "{}: {:.2f}%, {}: {:.2f}%".format(gender, genderConfidence * 100,age, ageConfidence * 100)
-		        print("[INFO] {}".format(text))
+		    text = "{}: {:.2f}%, {}: {:.2f}%".format(gender, genderConfidence * 100,age, ageConfidence * 100)
+		    print("[INFO] {}".format(text))
 
 		        # draw the bounding box of the face along with the associated predicted age and gender
-		        y = startY - 10 if startY - 10 > 10 else startY + 10
-		        cv2.rectangle(image, (startX, startY), (endX, endY),
-			        (128, 191, 255), 6)
-		        cv2.putText(image, text, (startX, y),
-			        cv2.FONT_HERSHEY_TRIPLEX, 1, (128, 191, 255), 2)
+		    y = startY - 10 if startY - 10 > 10 else startY + 10
+		    cv2.rectangle(image, (startX, startY), (endX, endY),
+			    (128, 191, 255), 6)
+		    cv2.putText(image, text, (startX, y),
+			    cv2.FONT_HERSHEY_TRIPLEX, 1, (128, 191, 255), 2)
 
 
         # save the output image
